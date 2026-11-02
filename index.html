@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Page title -->
+    <title>Test</title>
+
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="style.css?v=84">
+</head>
+
+<body>
+
+    <!-- ============================================================
+         WORLD
+         Contains the walking scene.
+         ============================================================ -->
+    <div id="world">
+
+        <button id="cityRevealPrompt" type="button" hidden>
+            [PRESS SPACE]
+        </button>
+        <div id="continuePrompt" hidden>Continue? Press space</div>
+        <section id="inspectCopy" hidden aria-live="polite">
+            <h2>POST</h2>
+            <p>Downtown Houston’s hub for culture, food, and recreation.</p>
+            <img
+                id="inspectPhoto"
+                src="POST%20BUILDING.jpg"
+                alt="Downtown Houston skyline at dusk"
+            >
+        </section>
+
+
+        <!-- ========================================================
+             SVG SCENE
+             Contains the city image, city lead line, and ground.
+             ======================================================== -->
+        <svg id="line">
+
+            <defs>
+
+                <!-- City reveal clipping area -->
+                <clipPath id="cityClip">
+
+                    <rect id="cityReveal"></rect>
+
+                </clipPath>
+
+            </defs>
+            <!-- City image -->
+            <image
+                id="cityImage"
+                href="City Skyline Visual.png"
+                preserveAspectRatio="none"
+                clip-path="url(#cityClip)"
+            ></image>
+
+            <g id="cityTargetDots"></g>
+
+            <!-- City lead line -->
+            <path id="cityLeadPath"></path>
+
+            <!-- Particles rise from the ground to form the skyline. -->
+            <g id="cityFormationDots"></g>
+
+            <!-- Walking ground -->
+            <g id="groundPath"></g>
+
+        </svg>
+
+        <canvas id="groundCanvas" aria-hidden="true"></canvas>
+
+        <canvas id="cityFormationCanvas" aria-hidden="true"></canvas>
+
+    </div>
+
+    <div id="sceneOverlay" aria-hidden="true"></div>
+    <div id="worldOverlay" aria-hidden="true">
+        <canvas id="adventureCanvas"></canvas>
+    </div>
+    <button id="buildingsPrompt" type="button" aria-label="Press Space to knock" hidden>
+        <img id="postLogo" src="POST%20logo.png" alt="">
+        <span class="inspect-door" aria-hidden="true">
+            <canvas class="inspect-door-canvas" id="doorDotCanvas"></canvas>
+        </span>
+        <span class="inspect-door-label">PRESS SPACE<br>TO KNOCK</span>
+    </button>
+    <div id="settingIntro" class="setting-intro" aria-live="polite" hidden>
+        Downtown Houston, Texas — a rainy day
+    </div>
+
+    <div id="controls">
+        <div id="walkText">WALK</div>
+        <div id="keys">
+            <div id="keyA" class="key">A</div>
+            <div id="or">OR</div>
+            <div id="keyD" class="key">D</div>
+        </div>
+    </div>
+    <div id="redFoodHeadline" aria-live="polite" aria-hidden="true">
+        <span class="red-food-blank">••••••</span> in the palm of your hand.
+    </div>
+    <section id="postFoodMarketScene" aria-live="polite" aria-hidden="true" hidden>
+        <div id="postFoodMarketHero" aria-hidden="true"></div>
+        <div id="postFoodMarketCarousel" role="region" aria-label="POST Food Market horizontal carousel" tabindex="0">
+            <header class="post-food-market-copy">
+                <h1>POST FOOD MARKET</h1>
+                <p>A foodie’s paradise, across our main building and East Wing.</p>
+            </header>
+            <div id="postFoodMarketMap" class="post-food-market-map" aria-hidden="true">
+                <svg class="post-food-market-map-half post-food-market-map-left" viewBox="0 0 800 667" preserveAspectRatio="xMidYMid meet" role="presentation">
+                    <defs>
+                        <clipPath id="postFoodWestHemisphereClip" clipPathUnits="userSpaceOnUse">
+                            <path d="M0 0 H760 L760 60 L755 120 L750 150 L740 180 L720 220 L710 280 L710 350 L700 430 L690 520 L680 667 H0 Z"></path>
+                        </clipPath>
+                    </defs>
+                    <g clip-path="url(#postFoodWestHemisphereClip)">
+                        <image class="map-base" href="post-market-world-map.svg?v=1" x="0" y="0" width="1600" height="667" preserveAspectRatio="none"></image>
+                        <path id="postFoodMarketMapHighlightLeft" class="map-region" d=""></path>
+                    </g>
+                </svg>
+                <svg class="post-food-market-map-half post-food-market-map-right" viewBox="680 0 920 667" preserveAspectRatio="xMidYMid meet" role="presentation">
+                    <defs>
+                        <clipPath id="postFoodEastHemisphereClip" clipPathUnits="userSpaceOnUse">
+                            <path d="M760 0 H1600 V667 H680 L690 520 L700 430 L710 350 L710 280 L720 220 L740 180 L750 150 L755 120 L760 60 Z"></path>
+                        </clipPath>
+                    </defs>
+                    <g clip-path="url(#postFoodEastHemisphereClip)">
+                        <image class="map-base" href="post-market-world-map.svg?v=1" x="0" y="0" width="1600" height="667" preserveAspectRatio="none"></image>
+                        <path id="postFoodMarketMapHighlightRight" class="map-region" d=""></path>
+                    </g>
+                </svg>
+            </div>
+            <p id="postFoodMarketRestaurantName" aria-live="polite"></p>
+            <div class="post-food-market-feature">
+                <img id="postFoodMarketFeatureImage" alt="">
+                <p id="postFoodMarketFeatureLabel" hidden></p>
+            </div>
+            <div id="postFoodMarketScrollHint" aria-hidden="false">SCROLL &#8595;</div>
+            <div class="post-food-market-category-row" aria-live="polite">
+                <span id="postFoodMarketPrevious"></span>
+                <span id="postFoodMarketCurrent"></span>
+                <span id="postFoodMarketNext"></span>
+            </div>
+        </div>
+        <div id="postFoodMarketCredits" aria-hidden="true">
+            <canvas id="postFoodMarketCreditsCanvas" aria-hidden="true"></canvas>
+            <div id="postFoodMarketCreditsHint">SCROLL TO FORM CREDITS &#8595;</div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         PLAYER
+         ============================================================ -->
+    <div id="player" aria-hidden="true">
+        <svg class="character-art" viewBox="0 0 124 124" role="presentation" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="head-ink-only" color-interpolation-filters="sRGB">
+                <feColorMatrix type="matrix" values="0 0 0 0 0.48  0 0 0 0 0.84  0 0 0 0 1  -.2126 -.7152 -.0722 1 0" />
+                </filter>
+            </defs>
+        <image class="character-plane" href="Character/Head.svg" x="-3" y="46.5" width="130" height="77.5" preserveAspectRatio="xMidYMid meet" filter="url(#head-ink-only)" />
+        <g class="rider-seat" transform="translate(-18 10)">
+        <g class="rider-figure" transform="translate(62 58) scale(1.12) translate(-62 -58)">
+        <g class="rider-upper-body">
+            <!-- The joints share endpoints: upright head, seated hips, and bent legs. -->
+            <path class="rider-line rider-legs" d="M61 54 Q55 58 49 59 Q45 60 46 64 L42 68 Q40 70 45 70 L49 68 M61 54 Q69 58 76 58 Q80 59 79 63 L84 67 Q87 69 91 66" />
+            <path class="rider-line rider-torso" d="M59 31 Q57 39 60 47 L61 54" />
+            <path class="rider-line rider-arm-back" d="M59 39 Q53 40 49 44 L43 50 Q42 52 45 52" />
+            <path class="rider-line rider-arm-front" d="M59 39 Q67 38 74 43 L81 49 Q83 51 80 52" />
+            <path class="rider-head-outline" d="M52 27 C51 22 54 17 59 17 C64 17 67 21 66 26 C65 31 61 33 57 31 C54 30 53 29 52 27 Z" />
+        </g>
+        </g>
+        </g>
+        </svg>
+    </div>
+    <canvas id="particleCanvas" aria-hidden="true"></canvas>
+    <canvas id="redHandCanvas" aria-hidden="true"></canvas>
+    <div id="fallVeil" hidden></div>
+
+
+    <!-- ============================================================
+         JAVASCRIPT
+         ============================================================ -->
+    <script src="post-market-map-regions.js?v=2"></script>
+    <script src="script.js?v=369"></script>
+
+</body>
+</html>
+
+
+
+li
+li
+
+
+
+
+
+
+
+
+
+
+
+
+
+
